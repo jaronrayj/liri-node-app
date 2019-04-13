@@ -77,6 +77,7 @@ function concertSearch(band) {
     axios.get(queryURL)
         .then(function (res) {
             var i = 0;
+            console.log("---------------------------------------------");
             console.log("Next venue: " + res.data[i].venue.name);
             var dateArr = res.data[i].datetime;
             var split = dateArr.split("T");
@@ -84,6 +85,7 @@ function concertSearch(band) {
             var date = split[0];
             console.log("Date: " + moment(date).format("MMMM Do YYYY"));
             console.log("Time: " + time + " UTC");
+            console.log("---------------------------------------------");
         });
     // todo give the next venue option
     // .then(
@@ -121,14 +123,16 @@ function songSearch(song) {
         }
 
         if (data === undefined) {
+            console.log("---------------------------------------------");
             console.log("Enjoy this song instead!");
             console.log("Song Name: The Sign");
             console.log("Artist: Ace of Base");
             console.log("Spotify Link: https://open.spotify.com/track/0hrBpAOgrt8RXigk83LLNE?si=g60WDgEaSCufJj-wdUslRw");
+            console.log("---------------------------------------------");
         } else {
             var song = data.tracks.items[0];
             var artists = "";
-            console.log(JSON.stringify(data.tracks.items[0], null, 2));
+            console.log("---------------------------------------------");
             for (let i = 0; i < song.artists.length; i++) {
                 artists += song.artists[i].name + ", ";
             }
@@ -137,34 +141,52 @@ function songSearch(song) {
             console.log("Song Name: " + song.name);
             console.log("Album Name: " + song.album.name);
             console.log("Spotify Link: " + song.preview_url);
+            console.log("---------------------------------------------");
         }
     });
-
-
-    //    * If no song is provided then your program will default to "The Sign" by Ace of Base.
 }
 
 function movieSearch(movie) {
-    //     * This will output the following information to your terminal/bash window:
 
-    //     ```
-    //       * Title of the movie.
-    //       * Year the movie came out.
-    //       * IMDB Rating of the movie.
-    //       * Rotten Tomatoes Rating of the movie.
-    //       * Country where the movie was produced.
-    //       * Language of the movie.
-    //       * Plot of the movie.
-    //       * Actors in the movie.
-    //     ```
+    axios.get("http://www.omdbapi.com", {
+            params: {
+                apikey: keys.omdb.key,
+                t: movie
+            }
+        }).then(function (res) {
+            console.log("---------------------------------------------");
+            console.log("Title: " + res.data.Title);
+            console.log("Year: " + res.data.Year);
+            if (res.data.Plot) {
+                console.log("Plot: " + res.data.Plot);
+            }
+            console.log("IMDB Rating: " + res.data.imdbRating);
+            if (res.data.Actors) {
+                console.log("Actors: " + res.data.Actors);
+            }
+            if (res.data.Country) {
+                console.log("Country Produced: " + res.data.Country);
+            }
+            if (res.data.Language) {
+                console.log("Language: " + res.data.Language);
+            }
+            if (res.data.Ratings[1].Value) {
+                console.log("Rotten Tomatoes Rating: " + res.data.Ratings[1].Value);
+            }
+            console.log("---------------------------------------------");
 
+
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+    // todo
     //   * If the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody.'
 
     //     * If you haven't watched "Mr. Nobody," then you should: <http://www.imdb.com/title/tt0485947/>
 
     //     * It's on Netflix!
-
-    //   * You'll use the `axios` package to retrieve data from the OMDB API. Like all of the in-class activities, the OMDB API requires an API key. You may use `trilogy`.
 }
 
 function doThis(doit) {
