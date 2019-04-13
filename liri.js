@@ -1,10 +1,13 @@
 require("dotenv").config();
 
+var axios = require("axios");
+
 var keys = require("./keys.js");
 
-// var spotify = new Spotify(keys.spotify);
+var moment = require('moment');
 
 var inquirer = require("inquirer");
+var Spotify = require('node-spotify-api');
 
 inquirer.prompt(
     [{
@@ -23,21 +26,32 @@ inquirer.prompt(
                 name: "search"
             }]).then(function (res, err) {
                 concertSearch(res.search);
-                console.log("TCL: res.search", res.search);
             });
             break;
 
         case "song search":
-            console.log("TCL: search", "song");
+            inquirer.prompt([{
+                type: "input",
+                message: "What song are you looking for?",
+                name: "search"
+            }]).then(function (res, err) {
+                songSearch(res.search);
+            });
             break;
 
         case "movie search":
-            console.log("TCL: movie", "movie");
+
+            inquirer.prompt([{
+                type: "input",
+                message: "What movie are you looking for?",
+                name: "search"
+            }]).then(function (res, err) {
+                movieSearch(res.search);
+            });
 
             break;
 
         case "do-what-it-says":
-            console.log("TCL: do-what-it-says", "do-what-it-says");
 
             break;
 
@@ -58,42 +72,76 @@ function searchContent(message) {
 }
 
 function concertSearch(band) {
-    // * This will search the Bands in Town Artist Events API (`"https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp"`) for an artist and render the following information about each event to the terminal:
 
-    // * var queryURL = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
+    var queryURL = "https://rest.bandsintown.com/artists/" + band + "/events?app_id=" + keys.bands;
+    axios.get(queryURL)
+        .then(function (res) {
+            var i = 0;
+            console.log("Next venue: " + res.data[i].venue.name);
+            var dateArr = res.data[i].datetime;
+            var split = dateArr.split("T");
+            var time = split.pop();
+            var date = split[0];
+            console.log("Date: " + moment(date).format("MMMM Do YYYY"));
+            console.log("Time: " + time + " UTC");
+        });
+    // todo give the next venue option
+    // .then(
+    //     inquirer.prompt([{
+    //         message: "Would you like to find the next result?",
+    //         type: "confirm",
+    //         name: "next"
+    //     }])
+    //     .then(function (res) {
+    //     if (res==="Yes") {
+    //         i++;
+    //         console.log("Next venue: " + JSON.stringify(res.data[i].venue.name));
+    //         console.log("Date and Time: " + res.data[i].datetime);
+    //     }
+    // }));
 
-    // * Name of the venue
-
-    // * Venue location
-
-    // * Date of the Event (use moment to format this as "MM/DD/YYYY")
 }
 
 function songSearch(song) {
-    //    * This will show the following information about the song in your terminal/bash window
 
-    //      * Artist(s)
 
-    //      * The song's name
 
-    //      * A preview link of the song from Spotify
 
-    //      * The album that the song is from
+    var spotify = new Spotify({
+        id: keys.spotify.id,
+        secret: keys.spotify.secret
+    });
+
+    spotify.search({
+        type: 'track',
+        query: song
+    }, function (err, data) {
+        if (err) {
+            return console.log('Error occurred: ' + err);
+        }
+
+        if (data === undefined) {
+            console.log("Enjoy this song instead!");
+            console.log("Song Name: The Sign");
+            console.log("Artist: Ace of Base");
+            console.log("Spotify Link: https://open.spotify.com/track/0hrBpAOgrt8RXigk83LLNE?si=g60WDgEaSCufJj-wdUslRw");
+        } else {
+            var song = data.tracks.items[0];
+            var artists = "";
+            console.log(JSON.stringify(data.tracks.items[0], null, 2));
+            for (let i = 0; i < song.artists.length; i++) {
+                artists += song.artists[i].name + ", ";
+            }
+            console.log("Artist(s): " + artists);
+
+            console.log("Song Name: " + song.name);
+            console.log("Album Name: " + song.album.name);
+            console.log("Spotify Link: " + song.preview_url);
+        }
+    });
+
 
     //    * If no song is provided then your program will default to "The Sign" by Ace of Base.
-
-    //    * You will utilize the [node-spotify-api](https://www.npmjs.com/package/node-spotify-api) package in order to retrieve song information from the Spotify API.
-
-    //    * The Spotify API requires you sign up as a developer to generate the necessary credentials. You can follow these steps in order to generate a **client id** and **client secret**:
-
-    //    * Step One: Visit <https://developer.spotify.com/my-applications/#!/>
-
-    //    * Step Two: Either login to your existing Spotify account or create a new one (a free account is fine) and log in.
-
-    //    * Step Three: Once logged in, navigate to <https://developer.spotify.com/my-applications/#!/applications/create> to register a new application to be used with the Spotify API. You can fill in whatever you'd like for these fields. When finished, click the "complete" button.
-
-    //    * Step Four: On the next screen, scroll down to where you see your client id and client secret. Copy these values down somewhere, you'll need them to use the Spotify API and the [node-spotify-api package](https://www.npmjs.com/package/node-spotify-api).
-
 }
 
 function movieSearch(movie) {
