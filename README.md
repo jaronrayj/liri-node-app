@@ -11,16 +11,16 @@ Run searches for concerts, songs or movies through Bands in Town API, OMDB API, 
 * On the .env file you'll need to set up keys for Spotify, Bands in Town, and OMDB. You can follow this format:
 ```# Spotify API keys
 
-SPOTIFY_ID=**id**
-SPOTIFY_SECRET=**secret**
+SPOTIFY_ID=*id*
+SPOTIFY_SECRET=*secret*
 
 # Bands in town keys
 
-BANDS_KEY=**key**
+BANDS_KEY=*key*
 
 # OMDB
 
-OMDB_KEY=**key**
+OMDB_KEY=*key*
 ```
 
 * Run ```node liri.js``` to initiate search
