@@ -20,7 +20,8 @@ BANDS_KEY=*key*
 
 # OMDB
 
-OMDB_KEY=*key*```
+OMDB_KEY=*key*
+```
 
 * Run ```node liri.js``` to initiate search
 
