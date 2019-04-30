@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+var fs = require("fs");
+
 var axios = require("axios");
 
 var keys = require("./keys.js");
@@ -52,7 +54,7 @@ inquirer.prompt(
             break;
 
         case "do-what-it-says":
-
+            doThis();
             break;
 
         default:
@@ -189,13 +191,43 @@ function movieSearch(movie) {
     //     * It's on Netflix!
 }
 
-function doThis(doit) {
-    // * Using the `fs` Node package, LIRI will take the text inside of random.txt and then use it to call one of LIRI's commands.
+function doThis() {
 
-    // * It should run `spotify-this-song` for "I Want it That Way," as follows the text in `random.txt`.
+    fs.readFile("./random.txt", "utf8", function (err, data) {
 
-    // * Edit the text in random.txt to test out the feature for movie-this and concert-this.
+        if (err) {
+            return console.log(err);
+        }
+
+        var choice = data.split(",");
+        var content = data.split(",").pop();
+
+        switch (choice[0]) {
+
+            case "concert-this":
+                concertSearch(content);
+                break;
+
+            case "spotify-this-song":
+                songSearch(content);
+                break;
+
+            case "movie-this":
+                movieSearch(content);
+                break;
+
+            default:
+                break;
+        }
+
+    });
 }
+
+
+//  todo log to file
+// function logData(input){
+//     fs.writeFile("./log.txt", "utf8", )
+// }
 
 //* ### BONUS
 
